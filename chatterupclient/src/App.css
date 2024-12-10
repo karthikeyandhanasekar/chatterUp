@@ -37,3 +37,29 @@
 .dropdown-divider {
   border-color: #444;
 }
+
+/* Apply styles to the scroll bar for Webkit-based browsers */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #2c2f33; /* Match the background color */
+  border-radius: 4px; /* Rounded edges for the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b4f56; /* Slightly darker color for the thumb */
+  border-radius: 4px; /* Rounded edges for the thumb */
+  border: 1px solid #2c2f33; /* Optional border for thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555b63; /* Slightly lighter on hover for interactivity */
+}
+
+/* For Firefox (experimental support) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4b4f56 #2c2f33; /* Thumb color and track color */
+}

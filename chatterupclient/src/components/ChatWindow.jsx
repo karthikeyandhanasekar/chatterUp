@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import UserDisplay from "./subComponents/UserDisplay";
 import { MenuIcon, ThreeDotIcon } from "../Icons/Icons";
 import MessageInput from "../components/MessageInput";
+import DownArrow from "./subComponents/DownArrow";
 const ChatWindowContainer = styled.div`
   flex: 1;
   width: 100%;
@@ -15,10 +16,17 @@ const ChatWindowContainer = styled.div`
 `;
 
 const MessagesContainer = styled.div`
+  position: relative;
+
   flex: 1;
   overflow-y: auto;
   padding: 10px;
   max-height: calc(100vh - 130px); // Adjust for header/input bar
+`;
+
+const ScrollButton = styled.div`
+  position: absolute;
+  right: 0;
 `;
 
 const Message = styled.div`
@@ -30,7 +38,7 @@ const Message = styled.div`
   text-align: ${({ isSender }) => (isSender ? "right" : "left")};
 `;
 
-function ChatWindow({ messages }) {
+function ChatWindow({ messages, openMenuFunction }) {
   const messageEndRef = useRef(null);
 
   useEffect(() => {
@@ -54,9 +62,10 @@ function ChatWindow({ messages }) {
             <ThreeDotIcon />
           </button>
           <button
-            className="btn btn-dark dropdown-toggle"
+            className="btn btn-dark d-sm-inline-block d-md-none"
             type="button"
             aria-expanded="false"
+            onClick={openMenuFunction}
           >
             <MenuIcon />
           </button>
@@ -84,6 +93,9 @@ function ChatWindow({ messages }) {
           </Message>
         ))}
         <div ref={messageEndRef} />
+        {/* <ScrollButton>
+          <DownArrow />
+        </ScrollButton> */}
       </MessagesContainer>
       <MessageInput onSend={null} />
     </ChatWindowContainer>

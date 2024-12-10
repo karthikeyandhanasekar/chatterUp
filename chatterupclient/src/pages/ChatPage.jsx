@@ -212,10 +212,9 @@ function ChatPage() {
         isOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
       />
-      <ToggleSidebarButton onClick={toggleSidebar}>☰</ToggleSidebarButton>
       {currentContact && (
         <>
-          <ChatWindow messages={messages} />
+          <ChatWindow messages={messages} openMenuFunction={toggleSidebar} />
         </>
       )}
     </ChatPageContainer>
