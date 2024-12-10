@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import UserDisplay from "./subComponents/UserDisplay";
-import { ThreeDotIcon } from "../Icons/Icons";
+import { MenuIcon, ThreeDotIcon } from "../Icons/Icons";
 import MessageInput from "../components/MessageInput";
 const ChatWindowContainer = styled.div`
   flex: 1;
@@ -12,14 +12,12 @@ const ChatWindowContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: 10px;
-  background: #2a2f32;
 `;
 
 const MessagesContainer = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 10px;
-  background-color: #fafafa;
   max-height: calc(100vh - 130px); // Adjust for header/input bar
 `;
 
@@ -27,7 +25,7 @@ const Message = styled.div`
   display: flex;
   margin-bottom: 10px;
   padding: 10px;
-  background-color: ${({ isSender }) => (isSender ? "#DCF8C6" : "#FFFFFF")};
+  color: #ffffff;
   align-self: ${({ isSender }) => (isSender ? "flex-end" : "flex-start")};
   text-align: ${({ isSender }) => (isSender ? "right" : "left")};
 `;
@@ -54,6 +52,13 @@ function ChatWindow({ messages }) {
             aria-expanded="false"
           >
             <ThreeDotIcon />
+          </button>
+          <button
+            className="btn btn-dark dropdown-toggle"
+            type="button"
+            aria-expanded="false"
+          >
+            <MenuIcon />
           </button>
           <ul
             className="dropdown-menu dropdown-menu-dark"

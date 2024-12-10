@@ -1,13 +1,12 @@
 // MessageInput.js
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { ShareIcon } from "../Icons/Icons";
 
 const InputContainer = styled.div`
   display: flex;
   padding: 12px;
-  border-top: 1px solid #ddd;
-  background-color: #f5f5f5;
   align-items: center;
   justify-content: space-between;
 
@@ -56,6 +55,11 @@ const SendButton = styled.button`
 `;
 const MessageInput = ({ onSend }) => {
   const [message, setMessage] = useState("");
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
 
   const handleSend = () => {
     if (message.trim()) {
@@ -68,6 +72,7 @@ const MessageInput = ({ onSend }) => {
     <InputContainer>
       <Input
         type="text"
+        ref={inputRef}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Type a message..."

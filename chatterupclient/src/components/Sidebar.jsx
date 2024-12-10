@@ -16,6 +16,7 @@ const SidebarContainer = styled.div`
   transition: transform 0.3s ease-in-out;
   max-height: 100vh;
   @media (max-width: 768px) {
+    min-width: 100vw;
     position: absolute;
     left: 0;
     top: 0;
