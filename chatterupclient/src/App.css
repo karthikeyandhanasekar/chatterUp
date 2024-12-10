@@ -1,38 +1,39 @@
 .App {
   text-align: center;
+  max-height: 100%;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+/* Remove default button styles */
+.dropdown-toggle {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.dropdown-toggle :hover {
+  background: none !important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Remove down arrow */
+.dropdown-toggle::after {
+  display: none;
+}
+
+/* Menu customization */
+.dropdown-menu {
+  border: none;
+  background-color: #2a2f32; /* Match dark background */
+}
+
+.dropdown-item {
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: #3a3f42; /* Hover color */
+}
+
+.dropdown-divider {
+  border-color: #444;
 }
