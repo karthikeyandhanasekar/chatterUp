@@ -1,6 +1,7 @@
 const { createLogger, format, transports } = require("winston");
 const path = require("path");
 const { formattedDate } = require("../utils/dateFunction");
+const { log } = require("console");
 
 class CustomErrorHandler extends Error {
   constructor(statusCode, message) {
@@ -44,7 +45,8 @@ const errorHandler = (err, req, res, next) => {
     timestamp: currentTime,
     stack: err.stack,
   });
-
+  console.log({statusCode});
+  
   // Respond to the client
   return res.status(statusCode).json({
     success: false,
