@@ -1,9 +1,9 @@
+import AppRouter from "./Router/AppRouter.jsx";
 import "./App.css";
-import ChatPage from "./pages/ChatPage.jsx";
 function App() {
   return (
     <div className="App">
-      <ChatPage />
+      <AppRouter />
     </div>
   );
 }

@@ -3,6 +3,12 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
+import {
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
 const ChatPageContainer = styled.div`
   display: flex;
@@ -34,28 +40,9 @@ const ToggleSidebarButton = styled.button`
 `;
 
 function ChatPage() {
-  const [contacts] = useState([
-    { name: "Alice" },
-    { name: "Bob" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-    { name: "Charlie" },
-  ]);
-
+  const [contacts] = useState([{ name: "Alice" }, { name: "Bob" }]);
+  const navigate = useNavigate();
+  const { id } = useParams();
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -142,57 +129,7 @@ function ChatPage() {
       timestamp: "2024-12-10T10:25:00Z",
       isSender: false,
     },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
   ]);
-  const [currentContact, setCurrentContact] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleSendMessage = (content) => {
@@ -202,19 +139,27 @@ function ChatPage() {
     ]);
   };
 
+  const onContactSelect = (value) => {
+    navigate(`/${value.name}`);
+  };
+
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   return (
     <ChatPageContainer>
       <Sidebar
         contacts={contacts}
-        onContactSelect={setCurrentContact}
+        onContactSelect={onContactSelect}
         isOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
       />
-      {currentContact && (
+      {id && (
         <>
-          <ChatWindow messages={messages} openMenuFunction={toggleSidebar} />
+          <ChatWindow
+            id={id}
+            messages={messages}
+            openMenuFunction={toggleSidebar}
+          />
         </>
       )}
     </ChatPageContainer>

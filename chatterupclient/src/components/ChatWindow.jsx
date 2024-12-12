@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import UserDisplay from "./subComponents/UserDisplay";
 import { MenuIcon, ThreeDotIcon } from "../Icons/Icons";
 import MessageInput from "../components/MessageInput";
-import DownArrow from "./subComponents/DownArrow";
+import { handleNotifications } from "../generals/generals";
 const ChatWindowContainer = styled.div`
   flex: 1;
   width: 100%;
@@ -38,7 +38,7 @@ const Message = styled.div`
   text-align: ${({ isSender }) => (isSender ? "right" : "left")};
 `;
 
-function ChatWindow({ messages, openMenuFunction }) {
+function ChatWindow({ id, messages, openMenuFunction }) {
   const messageEndRef = useRef(null);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ function ChatWindow({ messages, openMenuFunction }) {
     <ChatWindowContainer>
       <div className="d-flex flex-row justify-content-between text-white">
         <div className="d-flex flex-start">
-          <UserDisplay name={"name"} message="message" />
+          <UserDisplay name={id} message="message" />
         </div>
         <span className="dropdown">
           <button
@@ -103,6 +103,8 @@ function ChatWindow({ messages, openMenuFunction }) {
 }
 
 ChatWindow.prototype = {
+  id: PropTypes.string.isRequired,
+
   messages: PropTypes.any.isRequired,
 };
 

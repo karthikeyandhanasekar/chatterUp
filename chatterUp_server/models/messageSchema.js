@@ -1,26 +1,27 @@
 const { mongoose } = require("mongoose");
 
-const commentSchema = new mongoose.Schema(
+const messageSchema = new mongoose.Schema(
   {
-    text: {
+    message: {
       type: String,
       required: true,
       trim: true,
+      unique: true,
     },
-    room: {
-      type: String,
-      required: true,
-      trim: true,
+    roomId: {
+      type: mongoose.Schema.Type.ObjectId,
+      ref: "Rooms",
+      required: true, // Ensure that the userId is always present
     },
-    userId: {
-      type: String,
-      required: true,
-      trim: true,
+    senderId: {
+      type: mongoose.Schema.Type.ObjectId,
+      ref: "Rooms",
+      required: true, // Ensure that the userId is always present
     },
   },
   { timestamps: true }
 );
 
-const Comment = mongoose.model("Comment", commentSchema);
+const Message = mongoose.model("Messages", messageSchema);
 
-module.exports = Comment;
+module.exports = Message;

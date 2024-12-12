@@ -1,9 +1,11 @@
 // Sidebar.js
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import UserDisplay from "./subComponents/UserDisplay";
 import PropTypes from "prop-types";
 import { ThreeDotIcon } from "../Icons/Icons";
+import MessageInput from "./MessageInput";
+import SearchInput from "./subComponents/SearchInput";
 
 const SidebarContainer = styled.div`
   width: 100%;
@@ -32,15 +34,18 @@ const Contact = styled.div`
   text-align: left;
   color: #ffffff;
   display: flex;
-  justify-content: flex-start // &:hover {
-    //   background-color: #e9e9e9;
-    // }
-    @media (max-width: 768px) {
+  justify-content: flex-start;
+  &:hover {
+    background-color: #e9e9e9;
+    color: #000000;
+  }
+  @media (max-width: 768px) {
     padding: 12px;
   }
 `;
 
 function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
+  const [newChatType, setNewChatType] = useState(null);
   return (
     <SidebarContainer isOpen={isOpen}>
       <div className="d-flex flex-row align-items-center justify-content-between  text-white ">
@@ -59,18 +64,20 @@ function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
             className="dropdown-menu dropdown-menu-dark"
             aria-labelledby="dropdownMenuButton"
           >
-            <li>
-              <a className="dropdown-item" href="#">
-                New group
-              </a>
+            <li onClick={() => setNewChatType("user")}>
+              <p className="dropdown-item">New user</p>
+            </li>
+            <li onClick={() => setNewChatType("group")}>
+              <p className="dropdown-item">New group</p>
             </li>
           </ul>
         </span>
       </div>
-      <button onClick={toggleSidebar} style={{ display: "none" }}>
-        Toggle Sidebar
-      </button>
-      <div style={{ "overflow-y": "scroll" }} className="flex-1">
+      <div className="">
+        <SearchInput />
+      </div>
+
+      <div style={{ "overflow-y": "auto" }} className="flex-1">
         {contacts.map((contact, index) => (
           <Contact
             className="py-3 border-bottom "

@@ -7,7 +7,7 @@ const UserDisplay = ({ name, message }) => {
       <Avatar />
       <span className="mx-4">
         <h5>{name}</h5>
-        <p>{message}</p>
+        <p className="text-truncate">{message}</p>
       </span>
     </>
   );
