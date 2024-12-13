@@ -1,122 +1,145 @@
-// Sidebar.js
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import UserDisplay from "./subComponents/UserDisplay";
 import PropTypes from "prop-types";
 import { ThreeDotIcon } from "../Icons/Icons";
-import SearchInput from "./subComponents/SearchInput";
 import { getRoomDetailsController } from "../pages/controllers/chatPageController";
+import { decodeJWT } from "../generals/generals";
+import SearchInput from "./subComponents/SearchInput";
+import UserDisplay from "./subComponents/UserDisplay";
 
 const SidebarContainer = styled.div`
   width: 100%;
-  max-width: 30vw;
+  max-width: 300px;
   border-right: 1px solid #ddd;
   display: flex;
-  overflow-y: hidden;
   flex-direction: column;
   padding: 10px;
-  transition: transform 0.3s ease-in-out;
+  // background-color: #121212; /* Dark theme */
+  color: white;
   max-height: 100vh;
+
   @media (max-width: 768px) {
     min-width: 100vw;
     position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
     transform: ${({ isOpen }) =>
       isOpen ? "translateX(0)" : "translateX(-100%)"};
+    transition: transform 0.3s ease-in-out;
+  }
+`;
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+`;
+
+const ChatList = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 10px;
+
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 4px;
   }
 `;
 
 const Contact = styled.div`
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-align: left;
-  color: #ffffff;
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
+  padding: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  background-color: ${({ isActive }) => (isActive ? "#333" : "transparent")};
+  color: ${({ isActive }) => (isActive ? "#fff" : "#aaa")};
+
   &:hover {
-    background-color: #e9e9e9;
-    color: #000000;
-  }
-  @media (max-width: 768px) {
-    padding: 12px;
+    background-color: #444;
+    color: white;
   }
 `;
 
-function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
-  const [newChatType, setNewChatType] = useState(null);
+function Sidebar({ onContactSelect, isOpen }) {
   const [roomList, setRoomList] = useState([]);
+  const [selectedChat, setSelectedChat] = useState(null);
+  const token = sessionStorage.getItem("employeeToken");
 
   const getRoomDetails = async () => {
     try {
       const response = await getRoomDetailsController();
-      setRoomList(response.rooms);
-    } catch (error) {}
+      setRoomList(response.rooms || []);
+    } catch (error) {
+      console.error("Failed to fetch rooms:", error);
+    }
   };
 
   useEffect(() => {
     getRoomDetails();
   }, []);
-  console.log({ roomList });
 
-  const createChat = (value) => {
-    console.log({ value });
+  const handleChatSelect = (contact) => {
+    setSelectedChat(contact._id);
+    onContactSelect(contact);
   };
+
+  const handleLogOut = () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.href = "/login";
+  };
+
   return (
     <SidebarContainer isOpen={isOpen}>
-      <div className="d-flex flex-row align-items-center justify-content-between  text-white ">
-        <h2 className="">Chats</h2>
-        <span className="dropdown ">
-          <button
-            className="btn btn-dark dropdown-toggle"
-            type="button"
-            id="dropdownMenuButton"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <ThreeDotIcon />
-          </button>
-          <ul
-            className="dropdown-menu dropdown-menu-dark"
-            aria-labelledby="dropdownMenuButton"
-          >
-            <li onClick={() => setNewChatType("user")}>
-              <p className="dropdown-item">New user</p>
-            </li>
-            <li onClick={() => setNewChatType("group")}>
-              <p className="dropdown-item">New group</p>
+      <Header>
+        <h2>{decodeJWT(token)?.name} Chats</h2>
+        <button className="btn btn-dark dropdown-toggle" type="button">
+          <ThreeDotIcon />
+          <ul className="dropdown-menu">
+            <li onClick={handleLogOut}>
+              <p className="dropdown-item">LogOut</p>
             </li>
           </ul>
-        </span>
-      </div>
-      <div className="">
-        <SearchInput newChatType={newChatType} onSend={createChat} />
-      </div>
+        </button>
+      </Header>
 
-      <div style={{ "overflow-y": "auto" }} className="flex-1">
-        {roomList.map((contact, index) => (
-          <Contact
-            className="py-3 border-bottom "
-            key={contact._id}
-            onClick={() => onContactSelect(contact)}
-          >
-            <UserDisplay
-              name={contact.participants[0].name}
-              message="message"
-            />
-          </Contact>
-        ))}
-      </div>
+      <SearchInput onSend={(query) => console.log("Search for:", query)} />
+
+      <ChatList>
+        {roomList.length === 0 ? (
+          <p>No chats available</p>
+        ) : (
+          roomList.map((contact) => (
+            <Contact
+              key={contact._id}
+              isActive={selectedChat === contact._id}
+              onClick={() => handleChatSelect(contact)}
+            >
+              <UserDisplay
+                name={contact.participants[0].name}
+                message="Hello!"
+              />
+            </Contact>
+          ))
+        )}
+      </ChatList>
     </SidebarContainer>
   );
 }
 
 Sidebar.propTypes = {
-  contacts: PropTypes.string.isRequired,
   onContactSelect: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  toggleSidebar: PropTypes.func.isRequired,
 };
 
 export default Sidebar;

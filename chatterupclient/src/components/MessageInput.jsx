@@ -1,14 +1,13 @@
-// MessageInput.js
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { ShareIcon } from "../Icons/Icons";
 
 const InputContainer = styled.div`
   display: flex;
   padding: 12px;
   align-items: center;
-  justify-content: space-between;
+  background-color: #1e1e1e;
+  border-top: 1px solid #333;
 
   @media (max-width: 768px) {
     padding: 10px;
@@ -17,19 +16,24 @@ const InputContainer = styled.div`
 
 const Input = styled.input`
   flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  border: none;
   border-radius: 20px;
   outline: none;
   font-size: 16px;
-  background-color: #fff;
+  background-color: #2c2c2c;
+  color: white;
 
   &:focus {
-    border-color: #25d366;
+    border: 1px solid #25d366;
+  }
+
+  &::placeholder {
+    color: #888;
   }
 
   @media (max-width: 768px) {
-    padding: 8px;
+    padding: 10px;
     font-size: 14px;
   }
 `;
@@ -43,6 +47,7 @@ const SendButton = styled.button`
   border-radius: 20px;
   cursor: pointer;
   font-size: 16px;
+  transition: background-color 0.3s;
 
   &:hover {
     background-color: #20b957;
@@ -53,36 +58,71 @@ const SendButton = styled.button`
     font-size: 14px;
   }
 `;
+
+const TypingIndicator = styled.div`
+  font-size: 14px;
+  color: #888;
+  padding: 8px 16px;
+  font-style: italic;
+  text-align: left;
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+`;
+
 const MessageInput = ({ onSend }) => {
   const [message, setMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const inputRef = useRef(null);
-
-  useEffect(() => {
-    inputRef.current.focus();
-  }, []);
+  const typingTimeoutRef = useRef(null);
 
   const handleSend = () => {
     if (message.trim()) {
       onSend(message);
       setMessage("");
+      setIsTyping(false); // Stop typing animation after sending the message
     }
   };
 
+  const handleTyping = (e) => {
+    const value = e.target.value;
+    setMessage(value);
+
+    if (!isTyping) {
+      setIsTyping(true); // Show typing indicator
+    }
+
+    // Reset typing timeout every time the user types
+    clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+      setIsTyping(false); // Hide typing indicator after 2 seconds of inactivity
+    }, 1000);
+  };
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   return (
-    <InputContainer>
-      <Input
-        type="text"
-        ref={inputRef}
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type a message..."
-      />
-      <SendButton onClick={handleSend}>Send</SendButton>
-    </InputContainer>
+    <>
+      {isTyping && <TypingIndicator>Typing...</TypingIndicator>}
+      <InputContainer>
+        <Input
+          type="text"
+          ref={inputRef}
+          value={message}
+          onChange={handleTyping}
+          placeholder="Type a message..."
+        />
+        <SendButton onClick={handleSend}>Send</SendButton>
+      </InputContainer>
+    </>
   );
 };
 
-MessageInput.prototype = {
+MessageInput.propTypes = {
   onSend: PropTypes.func.isRequired,
 };
 

@@ -5,6 +5,7 @@ const Message = require("../models/messageSchema");
 
 const { CustomErrorHandler } = require("../middleware/errorsMiddleware");
 const { generateToken } = require("../services/tokenService");
+const { log } = require("winston");
 
 exports.getUsers = async (req, res, next) => {
   try {
@@ -40,9 +41,13 @@ exports.createRoomController = async (req, res, next) => {
     let { id: _id, room, participantIds } = req.body;
     participantIds = [req.user._id, ...participantIds];
     // Check if room is an ObjectId or a string (name)
+    if (!room || typeof room !== "string" || room.trim() === "") {
+      return res.status(400).json({ error: "Invalid room name provided" });
+    }
     const query = mongoose.Types.ObjectId.isValid(_id)
       ? { _id, room } // If room is a valid ObjectId, search by _id
       : { room }; // Otherwise, search by room name
+    console.log({ query });
 
     const { _doc: roomDoc } = await Room.findOneAndUpdate(
       query, // Find room by room name
@@ -51,12 +56,15 @@ exports.createRoomController = async (req, res, next) => {
       },
       { upsert: true, new: true } // If room doesn't exist, create new one; return updated/new room
     );
+    console.log({ roomDoc });
 
     return res.status(201).json({
       success: true,
       roomDoc,
     });
   } catch (error) {
+    console.log(error);
+
     next(new CustomErrorHandler(500, error.message));
   }
 };

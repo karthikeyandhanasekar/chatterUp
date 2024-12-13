@@ -1,11 +1,10 @@
-// ChatWindow.js
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { ThreeDotIcon, MenuIcon } from "../Icons/Icons";
 import UserDisplay from "./subComponents/UserDisplay";
-import { MenuIcon, ThreeDotIcon } from "../Icons/Icons";
-import MessageInput from "../components/MessageInput";
-import { handleNotifications } from "../generals/generals";
+import MessageInput from "./MessageInput";
+import MessagesContainerComponent from "./subComponents/MessageContainer";
 import {
   createMessageController,
   getRoomMessagesController,
@@ -16,37 +15,36 @@ const ChatWindowContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: #121212; /* Modern dark theme */
+  color: white;
   padding: 10px;
 `;
 
-const MessagesContainer = styled.div`
-  position: relative;
-
-  flex: 1;
-  overflow-y: auto;
-  padding: 10px;
-  max-height: calc(100vh - 130px); // Adjust for header/input bar
-`;
-
-const ScrollButton = styled.div`
-  position: absolute;
-  right: 0;
-`;
-
-const Message = styled.div`
+const Header = styled.div`
   display: flex;
-  margin-bottom: 10px;
-  padding: 10px;
-  color: #ffffff;
-  align-self: ${({ isSender }) => (isSender ? "flex-end" : "flex-start")};
-  text-align: ${({ isSender }) => (isSender ? "right" : "left")};
-`;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
 
-function ChatWindow({ room, openMenuFunction }) {
+  h5 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+`;
+const ChatWindow = ({ room }) => {
   const messageEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
+
+  // Scroll to the latest message
   useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   const getRoomMessages = async () => {
@@ -65,14 +63,19 @@ function ChatWindow({ room, openMenuFunction }) {
 
   useEffect(() => {
     getRoomMessages();
-  }, []);
+  }, [room.id]);
+
+  const openMenuFunction = () => {
+    console.log("Menu opened!");
+  };
   return (
     <ChatWindowContainer>
-      <div className="d-flex flex-row justify-content-between text-white">
-        <div className="d-flex flex-start">
-          <UserDisplay name={room.name} message="message" />
+      {/* Header */}
+      <Header>
+        <div>
+          <UserDisplay name={room.name} message="Active now" />
         </div>
-        <span className="dropdown">
+        <div>
           <button
             className="btn btn-dark dropdown-toggle"
             type="button"
@@ -100,32 +103,23 @@ function ChatWindow({ room, openMenuFunction }) {
               </a>
             </li>
           </ul>
-        </span>
-      </div>
+        </div>
+      </Header>
 
-      <MessagesContainer>
-        {messages.map((msg, index) => (
-          <Message
-            key={msg._id}
-            isSender={msg.isSender}
-            className={msg.isSender ? "justify-content-end" : "flex-start"}
-          >
-            {msg.message}
-          </Message>
-        ))}
-        <div ref={messageEndRef} />
-        {/* <ScrollButton>
-          <DownArrow />
-        </ScrollButton> */}
-      </MessagesContainer>
-      <MessageInput room={room} onSend={onSendMessage} />
+      <MessagesContainerComponent messages={messages} />
+      {/* Message Input */}
+      <MessageInput onSend={onSendMessage} />
     </ChatWindowContainer>
   );
-}
+};
 
-ChatWindow.prototype = {
-  room: PropTypes.object.isRequired,
-  openMenuFunction: PropTypes.any.isRequired,
+ChatWindow.propTypes = {
+  room: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+
+    name: PropTypes.string.isRequired,
+  }).isRequired,
+  onSendMessage: PropTypes.func.isRequired,
 };
 
 export default ChatWindow;
