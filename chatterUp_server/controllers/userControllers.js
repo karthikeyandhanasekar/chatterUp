@@ -135,6 +135,13 @@ exports.getRoomMessages = async (req, res, next) => {
 exports.createUser = async (req, res, next) => {
   try {
     const { name } = req.body;
+
+    // const isUserExists = await User.findOne(
+    //   { name } // Find user by name
+    // );
+    // if (isUserExists?._id) {
+    //   next(new CustomErrorHandler(400, "Username already exists"));
+    // }
     const user = await User.findOneAndUpdate(
       { name }, // Find user by name
       { $set: { name } }, // Update name (if necessary)
@@ -150,6 +157,8 @@ exports.createUser = async (req, res, next) => {
     }
   } catch (error) {
     // Emit an error event to the client
+    console.log(error);
+
     next(new CustomErrorHandler(500, "Internal Server Error"));
   }
 };

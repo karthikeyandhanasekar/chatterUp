@@ -26,3 +26,21 @@ export const createMessageController = async (id, message) => {
     throw error;
   }
 };
+
+export const createUser = async (name) => {
+  try {
+    const response = await post(`/users`, { name });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const validSessionController = async () => {
+  try {
+    const response = await get(`/`);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
