@@ -10,6 +10,10 @@ import axiosInstance from "./axios";
  * const userData = await get('https://api.example.com/users/me');
  * console.log(userData); // { id: 1, name: 'John Doe', email: 'johndoe@example.com' }
  */
+sessionStorage.setItem(
+  "employeeToken",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVhNjkyNTRiMjliMDg2M2FmYzRiNWEiLCJuYW1lIjoiVXNlcjEiLCJ0eXBlTmFtZSI6IlVzZXIiLCJjcmVhdGVkQXQiOiIyMDI0LTEyLTEyVDA0OjQwOjA1Ljg2NVoiLCJ1cGRhdGVkQXQiOiIyMDI0LTEyLTEyVDA2OjUyOjQ3LjQ5MFoiLCJfX3YiOjAsImlhdCI6MTczMzk4NjM2NywiZXhwIjoxNzM0MTU5MTY3fQ.IrGdRvN_aScvNB4iy1jUFe8OXAWfwlnfZG1JaYIXtQs"
+);
 const get = async (url) => {
   try {
     const token = sessionStorage.getItem("employeeToken");

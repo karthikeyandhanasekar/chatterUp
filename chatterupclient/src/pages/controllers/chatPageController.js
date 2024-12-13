@@ -8,3 +8,12 @@ export const getRoomDetailsController = async () => {
     throw error;
   }
 };
+
+export const getRoomMessagesController = async ( id ) => {
+  try {
+    const response = await get(`/users/roomMessage/${id}`);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

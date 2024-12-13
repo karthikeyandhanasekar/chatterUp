@@ -51,15 +51,14 @@ function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
   const getRoomDetails = async () => {
     try {
       const response = await getRoomDetailsController();
-      setRoomList(response.rooms)
+      setRoomList(response.rooms);
     } catch (error) {}
   };
 
   useEffect(() => {
     getRoomDetails();
   }, []);
-  console.log({roomList});
-  
+  console.log({ roomList });
 
   const createChat = (value) => {
     console.log({ value });
@@ -102,7 +101,10 @@ function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
             key={contact._id}
             onClick={() => onContactSelect(contact)}
           >
-            <UserDisplay name={contact.room} message="message" />
+            <UserDisplay
+              name={contact.participants[0].name}
+              message="message"
+            />
           </Contact>
         ))}
       </div>

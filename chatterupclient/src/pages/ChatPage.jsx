@@ -43,104 +43,11 @@ function ChatPage() {
   const [contacts] = useState([{ name: "Alice" }, { name: "Bob" }]);
   const navigate = useNavigate();
   const { id, name } = useParams();
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      content: "Hey Alice, how are you?",
-      senderId: 1,
-      timestamp: "2024-12-10T10:00:00Z",
-      isSender: false,
-    },
-    {
-      id: 2,
-      content: "I'm good, thanks! How about you?",
-      senderId: 2,
-      timestamp: "2024-12-10T10:01:00Z",
-      isSender: true,
-    },
-    {
-      id: 3,
-      content: "I'm doing well too, just working on a project.",
-      senderId: 1,
-      timestamp: "2024-12-10T10:05:00Z",
-      isSender: false,
-    },
-    {
-      id: 4,
-      content: "That's awesome! What project are you working on?",
-      senderId: 2,
-      timestamp: "2024-12-10T10:10:00Z",
-      isSender: true,
-    },
-    {
-      id: 5,
-      content:
-        "It's a chat app like WhatsApp. You should check it out when it's done!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:15:00Z",
-      isSender: false,
-    },
-    {
-      id: 6,
-      content: "Sounds interesting! Looking forward to it.",
-      senderId: 2,
-      timestamp: "2024-12-10T10:20:00Z",
-      isSender: true,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-    {
-      id: 7,
-      content: "I'll share it with you once it's ready!",
-      senderId: 1,
-      timestamp: "2024-12-10T10:25:00Z",
-      isSender: false,
-    },
-  ]);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const handleSendMessage = (content) => {
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { content, isSender: true },
-    ]);
-  };
-
   const onContactSelect = (value) => {
-    navigate(`/${value._id}/${value.room}`);
+    navigate(`/${value._id}/${value.participants[0].name}`);
   };
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
@@ -155,11 +62,7 @@ function ChatPage() {
       />
       {id && (
         <>
-          <ChatWindow
-            id={name}
-            messages={messages}
-            openMenuFunction={toggleSidebar}
-          />
+          <ChatWindow room={{ id, name }} openMenuFunction={toggleSidebar} />
         </>
       )}
     </ChatPageContainer>

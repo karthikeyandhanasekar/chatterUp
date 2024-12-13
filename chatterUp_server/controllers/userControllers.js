@@ -63,10 +63,20 @@ exports.createRoomController = async (req, res, next) => {
 
 exports.getRoomList = async (req, res, next) => {
   try {
-    const rooms = await Room.find({
+    let rooms = await Room.find({
       participants: { $in: req.user._id },
+    })
+      .select({ _id: 1, room: 1, participants: 1, roomType: 1 })
+      .populate("participants", { _id: 1, name: 1 });
+    rooms = rooms.map((room) => {
+      const filteredParticipants = room.participants.filter(
+        (participant) => participant._id.toString() !== req.user._id.toString()
+      );
+      return {
+        ...room.toObject(), // Convert Mongoose document to plain object
+        participants: filteredParticipants, // Replace participants with the filtered array
+      };
     });
-
     return res.status(201).json({
       success: true,
       rooms,
@@ -98,9 +108,20 @@ exports.getRoomMessages = async (req, res, next) => {
   try {
     let { id: roomId } = req.params;
 
-    const messages = await Message.find({ roomId }).populate("userId", {
-      _id: 1,
-      name: 1,
+    let messages = await Message.find({ roomId })
+      .select({
+        _id: 1,
+        createdAt: 1,
+        message: 1,
+        userId: 1,
+      })
+      .populate("userId");
+
+    messages = messages.map((message) => {
+      return {
+        ...message.toObject(), // Convert Mongoose document to plain object
+        isSender: message.userId._id.toString() !== req.user._id.toString(), // Add isSender field
+      };
     });
     return res.status(201).json({
       success: true,

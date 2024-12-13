@@ -1,11 +1,12 @@
 // ChatWindow.js
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import UserDisplay from "./subComponents/UserDisplay";
 import { MenuIcon, ThreeDotIcon } from "../Icons/Icons";
 import MessageInput from "../components/MessageInput";
 import { handleNotifications } from "../generals/generals";
+import { getRoomMessagesController } from "../pages/controllers/chatPageController";
 const ChatWindowContainer = styled.div`
   flex: 1;
   width: 100%;
@@ -38,18 +39,26 @@ const Message = styled.div`
   text-align: ${({ isSender }) => (isSender ? "right" : "left")};
 `;
 
-function ChatWindow({ id, messages, openMenuFunction }) {
+function ChatWindow({ room, openMenuFunction }) {
   const messageEndRef = useRef(null);
-
+  const [messages, setMessages] = useState([]);
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+  
+  const getRoomMessages = async () => {
+    try {
+      const response = await getRoomMessagesController(room.id);
+      setMessages(response.messages);
+    } catch (error) {}
+  };
 
+  useEffect(() => {getRoomMessages()},[]);
   return (
     <ChatWindowContainer>
       <div className="d-flex flex-row justify-content-between text-white">
         <div className="d-flex flex-start">
-          <UserDisplay name={id} message="message" />
+          <UserDisplay name={room.name} message="message" />
         </div>
         <span className="dropdown">
           <button
@@ -85,11 +94,11 @@ function ChatWindow({ id, messages, openMenuFunction }) {
       <MessagesContainer>
         {messages.map((msg, index) => (
           <Message
-            key={index}
+            key={msg._id}
             isSender={msg.isSender}
             className={msg.isSender ? "justify-content-end" : "flex-start"}
           >
-            {msg.content}
+            {msg.message}
           </Message>
         ))}
         <div ref={messageEndRef} />
@@ -103,9 +112,8 @@ function ChatWindow({ id, messages, openMenuFunction }) {
 }
 
 ChatWindow.prototype = {
-  id: PropTypes.string.isRequired,
-
-  messages: PropTypes.any.isRequired,
+  room: PropTypes.object.isRequired,
+  openMenuFunction: PropTypes.any.isRequired,
 };
 
 export default ChatWindow;
