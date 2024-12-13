@@ -6,7 +6,10 @@ import UserDisplay from "./subComponents/UserDisplay";
 import { MenuIcon, ThreeDotIcon } from "../Icons/Icons";
 import MessageInput from "../components/MessageInput";
 import { handleNotifications } from "../generals/generals";
-import { getRoomMessagesController } from "../pages/controllers/chatPageController";
+import {
+  createMessageController,
+  getRoomMessagesController,
+} from "../pages/controllers/chatPageController";
 const ChatWindowContainer = styled.div`
   flex: 1;
   width: 100%;
@@ -45,7 +48,7 @@ function ChatWindow({ room, openMenuFunction }) {
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-  
+
   const getRoomMessages = async () => {
     try {
       const response = await getRoomMessagesController(room.id);
@@ -53,7 +56,16 @@ function ChatWindow({ room, openMenuFunction }) {
     } catch (error) {}
   };
 
-  useEffect(() => {getRoomMessages()},[]);
+  const onSendMessage = async (message) => {
+    try {
+      const response = await createMessageController(room.id, message);
+      debugger;
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getRoomMessages();
+  }, []);
   return (
     <ChatWindowContainer>
       <div className="d-flex flex-row justify-content-between text-white">
@@ -106,7 +118,7 @@ function ChatWindow({ room, openMenuFunction }) {
           <DownArrow />
         </ScrollButton> */}
       </MessagesContainer>
-      <MessageInput onSend={null} />
+      <MessageInput room={room} onSend={onSendMessage} />
     </ChatWindowContainer>
   );
 }

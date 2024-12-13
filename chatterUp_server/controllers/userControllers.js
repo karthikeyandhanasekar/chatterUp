@@ -160,10 +160,10 @@ exports.createMessage = async (req, res, next) => {
     const { _id: userId } = req.user;
     const { message } = req.body;
 
-    const savedMessage = await new Message({ roomId, userId, message }).save();
+    await new Message({ roomId, userId, message }).save();
     return res.status(201).json({
       success: true,
-      savedMessage,
+      // savedMessage,
     });
   } catch (error) {
     next(new CustomErrorHandler(500, error.message));
