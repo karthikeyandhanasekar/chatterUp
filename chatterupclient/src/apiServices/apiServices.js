@@ -10,10 +10,10 @@ import axiosInstance from "./axios";
  * const userData = await get('https://api.example.com/users/me');
  * console.log(userData); // { id: 1, name: 'John Doe', email: 'johndoe@example.com' }
  */
-sessionStorage.setItem(
-  "employeeToken",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVhNjkzOThhYzkxMzUyODA4YTM4MjQiLCJuYW1lIjoiVXNlcjIiLCJ0eXBlTmFtZSI6IlVzZXIiLCJjcmVhdGVkQXQiOiIyMDI0LTEyLTEyVDA0OjQwOjI1LjYwOVoiLCJ1cGRhdGVkQXQiOiIyMDI0LTEyLTEzVDEwOjMzOjU0LjAyOFoiLCJfX3YiOjAsImlhdCI6MTczNDA4NjAzNCwiZXhwIjoxNzM0MjU4ODM0fQ.Yv4Jmx3YVBPt2uUxgyojZH-DjZfpC6j1BH-QWHcyU5Y"
-);
+// sessionStorage.setItem(
+//   "employeeToken",
+//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzVhNjkzOThhYzkxMzUyODA4YTM4MjQiLCJuYW1lIjoiVXNlcjIiLCJ0eXBlTmFtZSI6IlVzZXIiLCJjcmVhdGVkQXQiOiIyMDI0LTEyLTEyVDA0OjQwOjI1LjYwOVoiLCJ1cGRhdGVkQXQiOiIyMDI0LTEyLTEzVDEwOjMzOjU0LjAyOFoiLCJfX3YiOjAsImlhdCI6MTczNDA4NjAzNCwiZXhwIjoxNzM0MjU4ODM0fQ.Yv4Jmx3YVBPt2uUxgyojZH-DjZfpC6j1BH-QWHcyU5Y"
+// );
 const get = async (url) => {
   try {
     const token = sessionStorage.getItem("employeeToken");

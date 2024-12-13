@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { ThreeDotIcon } from "../Icons/Icons";
 import SearchInput from "./subComponents/SearchInput";
 import { getRoomDetailsController } from "../pages/controllers/chatPageController";
-
+import { decodeJWT } from "../generals/generals";
 const SidebarContainer = styled.div`
   width: 100%;
   max-width: 30vw;
@@ -44,10 +44,10 @@ const Contact = styled.div`
   }
 `;
 
-function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
+function Sidebar({ onContactSelect, isOpen, toggleSidebar }) {
   const [newChatType, setNewChatType] = useState(null);
   const [roomList, setRoomList] = useState([]);
-
+  const token = sessionStorage.getItem("employeeToken");
   const getRoomDetails = async () => {
     try {
       const response = await getRoomDetailsController();
@@ -58,15 +58,20 @@ function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
   useEffect(() => {
     getRoomDetails();
   }, []);
-  console.log({ roomList });
 
   const createChat = (value) => {
     console.log({ value });
   };
+
+  const handleLogOut = () => {
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.href = "/login";
+  };
   return (
     <SidebarContainer isOpen={isOpen}>
       <div className="d-flex flex-row align-items-center justify-content-between  text-white ">
-        <h2 className="">Chats</h2>
+        <h2 className="">{decodeJWT(token)?.name} Chats</h2>
         <span className="dropdown ">
           <button
             className="btn btn-dark dropdown-toggle"
@@ -81,11 +86,8 @@ function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
             className="dropdown-menu dropdown-menu-dark"
             aria-labelledby="dropdownMenuButton"
           >
-            <li onClick={() => setNewChatType("user")}>
-              <p className="dropdown-item">New user</p>
-            </li>
-            <li onClick={() => setNewChatType("group")}>
-              <p className="dropdown-item">New group</p>
+            <li onClick={() => handleLogOut()}>
+              <p className="dropdown-item">LogOut</p>
             </li>
           </ul>
         </span>

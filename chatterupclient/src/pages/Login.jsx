@@ -42,10 +42,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center vh-100"
-      style={{ backgroundColor: "#1e1e2f" }}
-    >
+    <div className="d-flex justify-content-center align-items-center vh-100">
       <div
         className="card shadow-lg"
         style={{

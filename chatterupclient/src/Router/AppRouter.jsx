@@ -1,7 +1,6 @@
 import React, { Suspense, useEffect } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { validSessionController } from "../pages/controllers/chatPageController";
-
+// import { validSessionController } from "../pages/controllers/chatPageController";
 const ChatPage = React.lazy(() => import("../pages/ChatPage"));
 const LoginPage = React.lazy(() => import("../pages/Login"));
 

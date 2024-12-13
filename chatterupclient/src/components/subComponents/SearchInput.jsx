@@ -85,7 +85,6 @@ const SearchInput = forwardRef(
     const getRoomDetails = async () => {
       try {
         const response = await getRoomDetailsController();
-        console.log({ response });
       } catch (error) {}
     };
 
