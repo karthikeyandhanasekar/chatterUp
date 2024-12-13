@@ -2,6 +2,8 @@ import Avatar from "./Avatar";
 import PropTypes from "prop-types";
 
 const UserDisplay = ({ name, message }) => {
+  console.log({name});
+  
   return (
     <>
       <Avatar />

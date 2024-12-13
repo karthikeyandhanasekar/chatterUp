@@ -8,7 +8,7 @@ const AppRouter = () => {
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <Route path="/" exact element={<ChatPage />} />
-        <Route path="/:id" element={<ChatPage />} />
+        <Route path="/:id/:name" element={<ChatPage />} />
       </Routes>
     </Suspense>
   );

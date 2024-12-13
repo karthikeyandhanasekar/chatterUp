@@ -63,7 +63,7 @@ exports.createRoomController = async (req, res, next) => {
 
 exports.getRoomList = async (req, res, next) => {
   try {
-    const rooms = await Room.findOne({
+    const rooms = await Room.find({
       participants: { $in: req.user._id },
     });
 
@@ -98,13 +98,10 @@ exports.getRoomMessages = async (req, res, next) => {
   try {
     let { id: roomId } = req.params;
 
-    const messages = await Message.find({ roomId })
-      .populate("userId", {
-        _id: 1,
-        name: 1,
-      })
-      ;
-
+    const messages = await Message.find({ roomId }).populate("userId", {
+      _id: 1,
+      name: 1,
+    });
     return res.status(201).json({
       success: true,
       messages,

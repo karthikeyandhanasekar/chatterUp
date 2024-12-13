@@ -1,11 +1,11 @@
 // Sidebar.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import UserDisplay from "./subComponents/UserDisplay";
 import PropTypes from "prop-types";
 import { ThreeDotIcon } from "../Icons/Icons";
-import MessageInput from "./MessageInput";
 import SearchInput from "./subComponents/SearchInput";
+import { getRoomDetailsController } from "../pages/controllers/chatPageController";
 
 const SidebarContainer = styled.div`
   width: 100%;
@@ -46,6 +46,24 @@ const Contact = styled.div`
 
 function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
   const [newChatType, setNewChatType] = useState(null);
+  const [roomList, setRoomList] = useState([]);
+
+  const getRoomDetails = async () => {
+    try {
+      const response = await getRoomDetailsController();
+      setRoomList(response.rooms)
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getRoomDetails();
+  }, []);
+  console.log({roomList});
+  
+
+  const createChat = (value) => {
+    console.log({ value });
+  };
   return (
     <SidebarContainer isOpen={isOpen}>
       <div className="d-flex flex-row align-items-center justify-content-between  text-white ">
@@ -74,17 +92,17 @@ function Sidebar({ contacts, onContactSelect, isOpen, toggleSidebar }) {
         </span>
       </div>
       <div className="">
-        <SearchInput />
+        <SearchInput newChatType={newChatType} onSend={createChat} />
       </div>
 
       <div style={{ "overflow-y": "auto" }} className="flex-1">
-        {contacts.map((contact, index) => (
+        {roomList.map((contact, index) => (
           <Contact
             className="py-3 border-bottom "
-            key={index}
+            key={contact._id}
             onClick={() => onContactSelect(contact)}
           >
-            <UserDisplay name={contact.name} message="message" />
+            <UserDisplay name={contact.room} message="message" />
           </Contact>
         ))}
       </div>
