@@ -4,9 +4,12 @@ import PropTypes from "prop-types";
 import { ThreeDotIcon } from "../Icons/Icons";
 import { getRoomDetailsController } from "../pages/controllers/chatPageController";
 import { decodeJWT } from "../generals/generals";
+<<<<<<< HEAD
 import SearchInput from "./subComponents/SearchInput";
 import UserDisplay from "./subComponents/UserDisplay";
 
+=======
+>>>>>>> 9dcbb6e8e5bd74a96fca6e2daaf8f023468214a7
 const SidebarContainer = styled.div`
   width: 100%;
   max-width: 300px;
@@ -70,12 +73,19 @@ const Contact = styled.div`
   }
 `;
 
+<<<<<<< HEAD
 function Sidebar({ onContactSelect, isOpen }) {
   const [roomList, setRoomList] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const token = sessionStorage.getItem("employeeToken");
   const fullMenu = useRef(null);
 
+=======
+function Sidebar({ onContactSelect, isOpen, toggleSidebar }) {
+  const [newChatType, setNewChatType] = useState(null);
+  const [roomList, setRoomList] = useState([]);
+  const token = sessionStorage.getItem("employeeToken");
+>>>>>>> 9dcbb6e8e5bd74a96fca6e2daaf8f023468214a7
   const getRoomDetails = async () => {
     try {
       const response = await getRoomDetailsController();
@@ -118,6 +128,7 @@ function Sidebar({ onContactSelect, isOpen }) {
     localStorage.clear();
     window.location.href = "/login";
   };
+<<<<<<< HEAD
 
   return (
     <SidebarContainer isOpen={isOpen}>
@@ -127,6 +138,27 @@ function Sidebar({ onContactSelect, isOpen }) {
           <ThreeDotIcon />
           <ul className="dropdown-menu">
             <li onClick={handleLogOut}>
+=======
+  return (
+    <SidebarContainer isOpen={isOpen}>
+      <div className="d-flex flex-row align-items-center justify-content-between  text-white ">
+        <h2 className="">{decodeJWT(token)?.name} Chats</h2>
+        <span className="dropdown ">
+          <button
+            className="btn btn-dark dropdown-toggle"
+            type="button"
+            id="dropdownMenuButton"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <ThreeDotIcon />
+          </button>
+          <ul
+            className="dropdown-menu dropdown-menu-dark"
+            aria-labelledby="dropdownMenuButton"
+          >
+            <li onClick={() => handleLogOut()}>
+>>>>>>> 9dcbb6e8e5bd74a96fca6e2daaf8f023468214a7
               <p className="dropdown-item">LogOut</p>
             </li>
           </ul>
