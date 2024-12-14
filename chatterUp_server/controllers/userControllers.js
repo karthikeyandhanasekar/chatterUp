@@ -174,15 +174,50 @@ exports.createUser = async (req, res, next) => {
 exports.createMessage = async (req, res, next) => {
   try {
     const { id: roomId } = req.params;
-    const { _id: userId } = req.user;
-    const { message } = req.body;
+    let { _id: userId } = req.user;
+    const { message, id } = req.body;
 
-    await new Message({ roomId, userId, message }).save();
+    userId = id ?? userId;
+
+    const savedMessage = await new Message({ roomId, userId, message }).save();
+
+    const populatedMessage = await Message.findById(savedMessage._id).select({
+      _id: 1,
+      createdAt: 1,
+      message: 1,
+      userId: 1,
+    });
     return res.status(201).json({
       success: true,
-      // savedMessage,
+      populatedMessage,
     });
   } catch (error) {
     next(new CustomErrorHandler(500, error.message));
+  }
+};
+
+exports.socketCreateMessage = async (socket, data) => {
+  try {
+    const { message, userId, roomId } = data;
+
+    const savedMessage = await new Message({ roomId, userId, message }).save();
+
+    const populatedMessage = await Message.findById(savedMessage._id)
+      .select({
+        _id: 1,
+        createdAt: 1,
+        message: 1,
+        userId: 1,
+      })
+      .populate("userId", { _id: 1, name: 1 });
+    socket.emit("newMessageSuccess", {
+      success: true,
+      message: populatedMessage,
+    });
+  } catch (error) {
+    socket.emit("newMessageError", {
+      success: false,
+      message: error.message,
+    });
   }
 };

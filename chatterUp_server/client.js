@@ -1,5 +1,5 @@
 const io = require("socket.io-client");
-const socket = io("http://localhost:3000"); // Your server URL
+const socket = io("http://localhost:5000"); // Your server URL
 
 // Once connected to the server, emit the 'createRoom' event
 socket.on("connect", () => {
@@ -9,10 +9,18 @@ socket.on("connect", () => {
   socket.emit("createRoom", { name: "MyNewRoom2" }); // You can pass more data as needed
 
   socket.emit("newMessage", {
-    roomId: "675a61ba156d8e6794a7ef68",
-    senderId: "675a63d653b9365932330636",
-    message: "Hi",
+    roomId: "675a8e58cfaf1a6a7530e8dc",
+    message: "socket message",
+    userId: "675a69398ac91352808a3824",
   });
+});
+
+socket.on("newMessageSuccess", (data) => {
+  console.log({ data });
+});
+
+socket.on("newMessageError", (error) => {
+  console.log({ error });
 });
 
 // Listen for the roomCreated response from the server
