@@ -36,7 +36,7 @@ const Header = styled.div`
     font-size: 0.9rem;
   }
 `;
-const ChatWindow = ({ room }) => {
+const ChatWindow = ({ room, openMenuFunction }) => {
   const messageEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
 
@@ -65,9 +65,6 @@ const ChatWindow = ({ room }) => {
     getRoomMessages();
   }, [room.id]);
 
-  const openMenuFunction = () => {
-    console.log("Menu opened!");
-  };
   return (
     <ChatWindowContainer>
       {/* Header */}
@@ -116,7 +113,6 @@ const ChatWindow = ({ room }) => {
 ChatWindow.propTypes = {
   room: PropTypes.shape({
     id: PropTypes.string.isRequired,
-
     name: PropTypes.string.isRequired,
   }).isRequired,
   onSendMessage: PropTypes.func.isRequired,

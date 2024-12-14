@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { ThreeDotIcon } from "../Icons/Icons";
@@ -74,11 +74,13 @@ function Sidebar({ onContactSelect, isOpen }) {
   const [roomList, setRoomList] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const token = sessionStorage.getItem("employeeToken");
+  const fullMenu = useRef(null);
 
   const getRoomDetails = async () => {
     try {
       const response = await getRoomDetailsController();
-      setRoomList(response.rooms || []);
+      fullMenu.current = response?.rooms || [];
+      setRoomList(response?.rooms || []);
     } catch (error) {
       console.error("Failed to fetch rooms:", error);
     }
@@ -91,6 +93,24 @@ function Sidebar({ onContactSelect, isOpen }) {
   const handleChatSelect = (contact) => {
     setSelectedChat(contact._id);
     onContactSelect(contact);
+  };
+
+  // Function to search rooms by participant name
+  const searchRoomByParticipantName = (rooms, participantName) => {
+    return rooms.filter((room) =>
+      room.participants.some((participant) =>
+        participant.name.toLowerCase().includes(participantName.toLowerCase())
+      )
+    );
+  };
+
+  const handleSearchQuery = (query) => {
+    if (!query) {
+      setRoomList(fullMenu.current);
+    } else {
+      debugger;
+      setRoomList(searchRoomByParticipantName(fullMenu.current, query));
+    }
   };
 
   const handleLogOut = () => {
@@ -113,7 +133,7 @@ function Sidebar({ onContactSelect, isOpen }) {
         </button>
       </Header>
 
-      <SearchInput onSend={(query) => console.log("Search for:", query)} />
+      <SearchInput onSend={handleSearchQuery} />
 
       <ChatList>
         {roomList.length === 0 ? (

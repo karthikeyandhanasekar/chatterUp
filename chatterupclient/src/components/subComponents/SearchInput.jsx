@@ -1,4 +1,10 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import styled from "styled-components";
 
 const InputContainer = styled.div`
@@ -34,6 +40,7 @@ const SendButton = styled.button`
   }
 `;
 
+// Debounce function (if needed for future use)
 const debounce = (func, delay) => {
   let timer;
   return (...args) => {
@@ -42,20 +49,30 @@ const debounce = (func, delay) => {
   };
 };
 
-const SearchInput = ({ onSend }) => {
+// Add forwardRef to the component
+const SearchInput = forwardRef(({ onSend }, ref) => {
   const [query, setQuery] = useState("");
-  const handleInputChange = (e) => setQuery(e.target.value);
+  const inputRef = useRef();
 
-  const handleSendClick = () => {
-    if (query.trim()) {
-      onSend(query);
-      setQuery("");
+  // Expose methods to the parent via `useImperativeHandle`
+  useImperativeHandle(ref, () => ({
+    resetInput: () => setQuery(""), // Clear the input field
+    focusInput: () => inputRef.current?.focus(), // Focus the input field
+  }));
+
+  const handleInputChange = (e) => {
+    if (e.target.value.trim()) {
+      setQuery(e.target.value);
+      return onSend(e.target.value);
     }
+    setQuery("");
+    onSend("");
   };
 
   return (
     <InputContainer>
       <Input
+        ref={inputRef} // Attach ref to the input field
         type="text"
         placeholder="Search chats..."
         value={query}
@@ -64,6 +81,6 @@ const SearchInput = ({ onSend }) => {
       {/* <SendButton onClick={handleSendClick}>Search</SendButton> */}
     </InputContainer>
   );
-};
+});
 
 export default SearchInput;
