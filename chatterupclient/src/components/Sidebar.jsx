@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { ThreeDotIcon } from "../Icons/Icons";
+import { LogOutIcon, ThreeDotIcon } from "../Icons/Icons";
 import { getRoomDetailsController } from "../pages/controllers/chatPageController";
-import { decodeJWT } from "../generals/generals";
+import { decodeJWT, getContactName } from "../generals/generals";
 import SearchInput from "./subComponents/SearchInput";
 import UserDisplay from "./subComponents/UserDisplay";
 
@@ -14,12 +14,11 @@ const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 10px;
-  // background-color: #121212; /* Dark theme */
   color: white;
-  max-height: 100vh;
-
+  height: 100vh;
+  background-color: #1e1e2f;
   @media (max-width: 768px) {
-    min-width: 100vw;
+    width: 100vw;
     position: absolute;
     transform: ${({ isOpen }) =>
       isOpen ? "translateX(0)" : "translateX(-100%)"};
@@ -122,13 +121,12 @@ function Sidebar({ onContactSelect, isOpen }) {
     <SidebarContainer isOpen={isOpen}>
       <Header>
         <h2>{decodeJWT(token)?.name} Chats</h2>
-        <button className="btn btn-dark dropdown-toggle" type="button">
-          <ThreeDotIcon />
-          <ul className="dropdown-menu">
-            <li onClick={handleLogOut}>
-              <p className="dropdown-item">LogOut</p>
-            </li>
-          </ul>
+        <button
+          className="btn btn-dark dropdown-toggle"
+          onClick={handleLogOut}
+          type="button"
+        >
+          <LogOutIcon />
         </button>
       </Header>
 
@@ -144,10 +142,7 @@ function Sidebar({ onContactSelect, isOpen }) {
               isActive={selectedChat === contact._id}
               onClick={() => handleChatSelect(contact)}
             >
-              <UserDisplay
-                name={contact.participants[0].name}
-                message="Hello!"
-              />
+              <UserDisplay name={getContactName(contact)} message="" />
             </Contact>
           ))
         )}

@@ -27,18 +27,7 @@ const Input = styled.input`
   }
 `;
 
-const SendButton = styled.button`
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
 
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
 
 // Debounce function (if needed for future use)
 const debounce = (func, delay) => {
@@ -78,7 +67,6 @@ const SearchInput = forwardRef(({ onSend }, ref) => {
         value={query}
         onChange={handleInputChange}
       />
-      {/* <SendButton onClick={handleSendClick}>Search</SendButton> */}
     </InputContainer>
   );
 });

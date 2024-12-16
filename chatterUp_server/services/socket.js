@@ -23,6 +23,11 @@ const initSocketServer = (server) => {
         socket.emit("roomJoined", `User ${userId} joined room ${roomId}`);
       });
 
+      socket.on("typing", async (data) => {
+        socket.to(data.roomId).emit("isTyping", data);
+        socket.emit("isTyping", data);
+      });
+
       socket.on("newMessage", async (data) => {
         await socketCreateMessage(socket, data);
       });

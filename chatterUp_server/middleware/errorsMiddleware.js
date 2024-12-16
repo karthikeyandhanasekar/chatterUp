@@ -44,9 +44,7 @@ const errorHandler = (err, req, res, next) => {
     body: req.body,
     timestamp: currentTime,
     stack: err.stack,
-  });
-  console.log({statusCode});
-  
+  });  
   // Respond to the client
   return res.status(statusCode).json({
     success: false,

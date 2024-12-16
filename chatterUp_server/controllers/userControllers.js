@@ -22,8 +22,6 @@ exports.getUsers = async (req, res, next) => {
 
 exports.getContacts = async (req, res, next) => {
   try {
-    console.log(req.user);
-
     const rooms = await User.find({ _id: { $ne: req.user._id } }).sort({
       createdAt: -1,
     });
@@ -47,8 +45,6 @@ exports.createRoomController = async (req, res, next) => {
     const query = mongoose.Types.ObjectId.isValid(_id)
       ? { _id, room } // If room is a valid ObjectId, search by _id
       : { room }; // Otherwise, search by room name
-    console.log({ query });
-
     const { _doc: roomDoc } = await Room.findOneAndUpdate(
       query, // Find room by room name
       {
@@ -56,8 +52,6 @@ exports.createRoomController = async (req, res, next) => {
       },
       { upsert: true, new: true } // If room doesn't exist, create new one; return updated/new room
     );
-    console.log({ roomDoc });
-
     return res.status(201).json({
       success: true,
       roomDoc,
@@ -74,7 +68,7 @@ exports.getRoomList = async (req, res, next) => {
     let rooms = await Room.find({
       participants: { $in: req.user._id },
     })
-      .select({ _id: 1, room: 1, participants: 1, roomType: 1 })
+      .select({ _id: 1, room: 1, participants: 1, roomType: 1, img: 1 })
       .populate("participants", { _id: 1, name: 1 });
     rooms = rooms.map((room) => {
       const filteredParticipants = room.participants.filter(
@@ -155,6 +149,22 @@ exports.createUser = async (req, res, next) => {
       { $set: { name } }, // Update name (if necessary)
       { upsert: true, new: true } // Perform upsert if the user doesn't exist
     );
+    const userId = user._doc._id;
+
+    const rooms = await Room.find({
+      roomType: "Group",
+      participants: { $ne: userId }, // MongoDB operator to check "not equal" in array
+    });
+    // Update each room to add the user to the participants array
+    const updatePromises = rooms.map((room) =>
+      Room.updateOne(
+        { _id: room._id },
+        { $push: { participants: userId } } // Add user to participants
+      )
+    );
+
+    // Execute all updates
+    await Promise.all(updatePromises);
     const token = generateToken({ ...user._doc });
 
     if (user) {
@@ -166,7 +176,6 @@ exports.createUser = async (req, res, next) => {
   } catch (error) {
     // Emit an error event to the client
     console.log(error);
-
     next(new CustomErrorHandler(500, "Internal Server Error"));
   }
 };

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { useSocket } from "../apiServices/socket";
 
 const InputContainer = styled.div`
   display: flex;
@@ -70,11 +71,18 @@ const TypingIndicator = styled.div`
   }
 `;
 
-const MessageInput = ({ onSend }) => {
+const MessageInput = ({ onSend, roomId }) => {
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const inputRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+  const socket = useSocket();
+
+  useEffect(() => {
+    socket.on("isTyping", (data) => {
+      setIsTyping(data.isTyping);
+    });
+  }, [socket]);
 
   const handleSend = () => {
     if (message.trim()) {
@@ -87,22 +95,24 @@ const MessageInput = ({ onSend }) => {
   const handleTyping = (e) => {
     const value = e.target.value;
     setMessage(value);
-
-    if (!isTyping) {
-      setIsTyping(true); // Show typing indicator
-    }
-
-    // Reset typing timeout every time the user types
-    clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false); // Hide typing indicator after 2 seconds of inactivity
-    }, 1000);
   };
 
   const onInputKeyUp = (e) => {
     e.preventDefault();
     if (e.keyCode === 13) {
-      handleSend();
+      return handleSend();
+    }
+    if (!isTyping) {
+      socket.emit("typing", { roomId, isTyping: true });
+      setIsTyping(true); // Show typing indicator
+    } else {
+      // Reset typing timeout every time the user types
+      // clearTimeout(typingTimeoutRef.current);
+      debugger;
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit("typing", { roomId, isTyping: false });
+        // Hide typing indicator after 2 seconds of inactivity
+      }, 1000);
     }
   };
 

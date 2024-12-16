@@ -17,7 +17,7 @@ const ChatWindowContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #121212; /* Modern dark theme */
+
   color: white;
   padding: 10px;
 `;
@@ -44,8 +44,6 @@ const ChatWindow = ({ room, openMenuFunction }) => {
   const socket = useSocket();
   const token = sessionStorage.getItem("employeeToken");
   const currentUserId = decodeJWT(token)?._id;
-  console.log({ name: decodeJWT(token)?.name });
-
   useEffect(() => {
     socket.emit("joinRoom", {
       roomId: room.id,
@@ -109,7 +107,7 @@ const ChatWindow = ({ room, openMenuFunction }) => {
           <UserDisplay name={room.name} message="Active now" />
         </div>
         <div>
-          <button
+          {/* <button
             className="btn btn-dark dropdown-toggle"
             type="button"
             id="dropdownMenuButton"
@@ -117,7 +115,7 @@ const ChatWindow = ({ room, openMenuFunction }) => {
             aria-expanded="false"
           >
             <ThreeDotIcon />
-          </button>
+          </button> */}
           <button
             className="btn btn-dark d-sm-inline-block d-md-none"
             type="button"
@@ -141,7 +139,7 @@ const ChatWindow = ({ room, openMenuFunction }) => {
 
       <MessagesContainerComponent messages={messages} />
       {/* Message Input */}
-      <MessageInput onSend={onSendMessage} />
+      <MessageInput roomId={room.id} onSend={onSendMessage} />
     </ChatWindowContainer>
   );
 };

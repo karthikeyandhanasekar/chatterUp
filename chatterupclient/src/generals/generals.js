@@ -60,6 +60,8 @@ export const handleNotifications = ({
     }
   }
 };
+export const getContactName = (contact) =>
+  contact.roomType === "Group" ? contact.room : contact.participants[0].name;
 
 export const decodeJWT = (token) => {
   try {

@@ -3,20 +3,18 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
-import {
-  useLoaderData,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
+import useResponsive from "../customHooks/usResponsive";
+import { getContactName } from "../generals/generals";
 const ChatPageContainer = styled.div`
-  display: flex;
   width: 100vw;
   height: 100vh;
   flex-direction: row;
   padding: 5px;
+  display: ${({ isSidebarOpen }) => (isSidebarOpen ? "none" : "flex")};
+
   @media (max-width: 768px) {
+    display: flex;
     flex-direction: column;
   }
 `;
@@ -29,7 +27,6 @@ const ToggleSidebarButton = styled.button`
   padding: 10px 20px;
   border-radius: 50%;
   cursor: pointer;
-
   @media (max-width: 768px) {
     display: block;
     position: absolute;
@@ -43,14 +40,18 @@ function ChatPage() {
   const [contacts] = useState([{ name: "Alice" }, { name: "Bob" }]);
   const navigate = useNavigate();
   const { id, name } = useParams();
+  const isMobile = useResponsive();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   const onContactSelect = (value) => {
-    navigate(`/${value._id}/${value.participants[0].name}`);
-  };
+    if (isMobile) {
+      toggleSidebar();
+    }
 
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+    navigate(`/${value._id}/${getContactName(value)}`);
+  };
 
   return (
     <ChatPageContainer>
@@ -62,7 +63,11 @@ function ChatPage() {
       />
       {id && (
         <>
-          <ChatWindow room={{ id, name }} openMenuFunction={toggleSidebar} />
+          <ChatWindow
+            isSidebarOpen={isSidebarOpen}
+            room={{ id, name }}
+            openMenuFunction={toggleSidebar}
+          />
         </>
       )}
     </ChatPageContainer>
