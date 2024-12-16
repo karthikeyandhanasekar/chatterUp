@@ -9,6 +9,8 @@ import {
   createMessageController,
   getRoomMessagesController,
 } from "../pages/controllers/chatPageController";
+import { useSocket } from "../apiServices/socket";
+import { decodeJWT } from "../generals/generals";
 const ChatWindowContainer = styled.div`
   flex: 1;
   width: 100%;
@@ -39,6 +41,21 @@ const Header = styled.div`
 const ChatWindow = ({ room, openMenuFunction }) => {
   const messageEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
+  const socket = useSocket();
+  const token = sessionStorage.getItem("employeeToken");
+  const currentUserId = decodeJWT(token)?._id;
+  console.log({ name: decodeJWT(token)?.name });
+
+  useEffect(() => {
+    socket.emit("joinRoom", {
+      roomId: room.id,
+      userId: decodeJWT(token).name,
+    });
+    socket.on("roomJoined", (message) => {
+      // alert(message);
+    });
+    debugger;
+  }, []);
 
   // Scroll to the latest message
   useEffect(() => {
@@ -46,7 +63,6 @@ const ChatWindow = ({ room, openMenuFunction }) => {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-
   const getRoomMessages = async () => {
     try {
       const response = await getRoomMessagesController(room.id);
@@ -54,11 +70,29 @@ const ChatWindow = ({ room, openMenuFunction }) => {
     } catch (error) {}
   };
 
+  useEffect(() => {
+    const handleMessage = (message1) => {
+      console.log(message1);
+
+      setMessages((prev) => [...prev, message1.message]);
+    };
+    socket.on("newMessageSuccess", handleMessage);
+
+    socket.on("newMessageError", (error) => {
+      alert(error.errorMessage);
+    });
+  }, [socket]);
+
   const onSendMessage = async (message) => {
     try {
-      const response = await createMessageController(room.id, message);
-      debugger;
-    } catch (error) {}
+      socket.emit("newMessage", {
+        roomId: room.id,
+        message: message,
+        userId: currentUserId,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {

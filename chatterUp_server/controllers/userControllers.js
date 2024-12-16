@@ -210,12 +210,14 @@ exports.socketCreateMessage = async (socket, data) => {
         userId: 1,
       })
       .populate("userId", { _id: 1, name: 1 });
-    socket.emit("newMessageSuccess", {
+    const response = {
       success: true,
       message: populatedMessage,
-    });
+    };
+    socket.to(roomId).emit("newMessageSuccess", response);
+    socket.emit("newMessageSuccess", response); // Sends back to the sender
   } catch (error) {
-    socket.emit("newMessageError", {
+    socket.to(roomId).emit("newMessageError", {
       success: false,
       message: error.message,
     });

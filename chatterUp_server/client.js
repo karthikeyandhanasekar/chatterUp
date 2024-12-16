@@ -6,8 +6,11 @@ socket.on("connect", () => {
   console.log("Connected to the server with ID:", socket.id);
 
   // Trigger the createRoom event and pass the necessary data
-  socket.emit("createRoom", { name: "MyNewRoom2" }); // You can pass more data as needed
+  // socket.emit("createRoom", { name: "MyNewRoom2" }); // You can pass more data as needed
 
+  socket.emit("joinRoom", {
+    roomId: "675a8e58cfaf1a6a7530e8dc",
+  });
   socket.emit("newMessage", {
     roomId: "675a8e58cfaf1a6a7530e8dc",
     message: "socket message",

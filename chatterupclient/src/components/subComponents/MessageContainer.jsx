@@ -89,27 +89,29 @@ const MessagesContainerComponent = ({ messages }) => {
   }, [messages]);
 
   const isSender = (userId) => userId === currentUserId;
-
+  debugger;
   return (
-    <MessagesContainer>
-      {messages.map((msg) => (
-        <MessageWrapper key={msg._id} isSender={isSender(msg.userId._id)}>
-          <UserName isSender={isSender(msg.userId._id)}>
-            {isSender(msg.userId._id) ? "You" : msg.userId.name}
-          </UserName>
-          <MessageBubble isSender={isSender(msg.userId._id)}>
-            {msg.message}
-          </MessageBubble>
-          <Timestamp isSender={isSender(msg.userId._id)}>
-            {new Date(msg.createdAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </Timestamp>
-        </MessageWrapper>
-      ))}
-      <div ref={messageEndRef} />
-    </MessagesContainer>
+    messages.length !== 0 && (
+      <MessagesContainer>
+        {messages.map((msg) => (
+          <MessageWrapper key={msg._id} isSender={isSender(msg.userId._id)}>
+            <UserName isSender={isSender(msg.userId._id)}>
+              {isSender(msg.userId._id) ? "You" : msg.userId.name}
+            </UserName>
+            <MessageBubble isSender={isSender(msg.userId._id)}>
+              {msg.message}
+            </MessageBubble>
+            <Timestamp isSender={isSender(msg.userId._id)}>
+              {new Date(msg.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </Timestamp>
+          </MessageWrapper>
+        ))}
+        <div ref={messageEndRef} />
+      </MessagesContainer>
+    )
   );
 };
 

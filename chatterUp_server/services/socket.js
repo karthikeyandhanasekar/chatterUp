@@ -2,34 +2,43 @@
 
 const socketIO = require("socket.io");
 const { socketCreateMessage } = require("../controllers/userControllers");
-
+const { transports } = require("winston");
 const initSocketServer = (server) => {
   try {
-    // Initialize socket.io with the HTTP server instance
-    const io = socketIO(server, {});
+    const io = socketIO(server, {
+      transports: "polling",
+      cors: {
+        origin: "http://localhost:3000", // Replace with your client's URL
+        methods: ["GET", "POST"],
+      },
+    });
 
-    // Setup a default connection event
     io.on("connection", (socket) => {
       console.log(`A user connected: ${socket.id}`);
 
-      // Emit a message indicating that the socket server is running
-      console.log("Socket server is running and waiting for events...");
+      // Join a room
+      socket.on("joinRoom", ({ roomId, userId }) => {
+        socket.join(roomId);
+        console.log(`User ${userId} joined room ${roomId}`);
+        socket.emit("roomJoined", `User ${userId} joined room ${roomId}`);
+      });
+
       socket.on("newMessage", async (data) => {
         await socketCreateMessage(socket, data);
       });
 
-      // Handle user disconnection
+      socket.on("leaveRoom", ({ roomId }) => {
+        socket.leave(roomId);
+        console.log(`Socket ${socket.id} left room ${roomId}`);
+      });
+
       socket.on("disconnect", () => {
         console.log(`Socket disconnected: ${socket.id}`);
       });
     });
 
-    // Emit a log message when the server is initialized and ready
-    console.log(
-      "Socket.IO server initialized and listening for connections..."
-    );
-
-    return io; // Return the io instance in case you need it elsewhere
+    console.log("Socket.IO server initialized...");
+    return io;
   } catch (error) {
     console.error("Error initializing Socket.IO server:", error);
   }
