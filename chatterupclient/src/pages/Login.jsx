@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createUser } from "./controllers/chatPageController";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../apiServices/socket";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const socket = useSocket();
   // Focus on the input field when the page loads
   useEffect(() => {
     if (inputRef.current) {
@@ -28,6 +30,16 @@ const LoginPage = () => {
 
       if (response.success) {
         setError("");
+        if (response.isNewlyJoined) {
+          debugger;
+          const data = {
+            roomIds: response.roomIds,
+            message: `User ${response.userName} joins this chat `,
+            userId: response.userId,
+          };
+          socket.emit("welcomeRoom", data);
+          debugger;
+        }
         sessionStorage.setItem("employeeToken", response.token);
         setTimeout(() => {
           navigate("/");

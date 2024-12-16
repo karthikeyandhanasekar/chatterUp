@@ -74,6 +74,37 @@ const MessagesContainer = styled.div`
     padding: 8px; /* Reduce padding for small screens */
   }
 `;
+const Banner = styled.div`
+  display: inline-block; /* Adjust width to match text length */
+  text-align: center;
+  padding: 10px 15px; /* Padding around the text */
+  margin: 10px auto; /* Center horizontally */
+  background: #ffeb3b; /* Yellow background */
+  color: #000; /* Text color */
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 20px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer; /* Add pointer cursor */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+
+  /* Hover effect for interactivity */
+  &:hover {
+    background: #fbc02d; /* Darker yellow on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+  }
+
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    font-size: 12px;
+    padding: 8px 12px; /* Reduce padding for smaller devices */
+  }
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+    padding: 6px 10px; /* Further reduce padding */
+  }
+`;
 
 // Main Component
 const MessagesContainerComponent = ({ messages }) => {
@@ -92,22 +123,29 @@ const MessagesContainerComponent = ({ messages }) => {
   return (
     messages.length !== 0 && (
       <MessagesContainer>
-        {messages.map((msg) => (
-          <MessageWrapper key={msg._id} isSender={isSender(msg.userId._id)}>
-            <UserName isSender={isSender(msg.userId._id)}>
-              {isSender(msg.userId._id) ? "You" : msg.userId.name}
-            </UserName>
-            <MessageBubble isSender={isSender(msg.userId._id)}>
-              {msg.message}
-            </MessageBubble>
-            <Timestamp isSender={isSender(msg.userId._id)}>
-              {new Date(msg.createdAt).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </Timestamp>
-          </MessageWrapper>
-        ))}
+        {messages.map((msg) =>
+          msg.messageType === "banner" ? (
+            <>
+              <Banner>{msg.message}</Banner>
+              <br />
+            </>
+          ) : (
+            <MessageWrapper key={msg._id} isSender={isSender(msg.userId._id)}>
+              <UserName isSender={isSender(msg.userId._id)}>
+                {isSender(msg.userId._id) ? "You" : msg.userId.name}
+              </UserName>
+              <MessageBubble isSender={isSender(msg.userId._id)}>
+                {msg.message}
+              </MessageBubble>
+              <Timestamp isSender={isSender(msg.userId._id)}>
+                {new Date(msg.createdAt).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </Timestamp>
+            </MessageWrapper>
+          )
+        )}
         <div ref={messageEndRef} />
       </MessagesContainer>
     )

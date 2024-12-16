@@ -102,7 +102,7 @@ const MessageInput = ({ onSend, roomId }) => {
     if (e.keyCode === 13) {
       return handleSend();
     }
-    if (!isTyping) {
+    if (!isTyping && message.trim()) {
       socket.emit("typing", { roomId, isTyping: true });
       setIsTyping(true); // Show typing indicator
     } else {

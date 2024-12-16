@@ -104,7 +104,7 @@ const ChatWindow = ({ room, openMenuFunction }) => {
       {/* Header */}
       <Header>
         <div>
-          <UserDisplay name={room.name} message="Active now" />
+          <UserDisplay name={room.name} message="" />
         </div>
         <div>
           {/* <button

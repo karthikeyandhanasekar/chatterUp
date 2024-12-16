@@ -116,6 +116,7 @@ exports.getRoomMessages = async (req, res, next) => {
         createdAt: 1,
         message: 1,
         userId: 1,
+        messageType: 1,
       })
       .populate("userId");
 
@@ -150,11 +151,22 @@ exports.createUser = async (req, res, next) => {
       { upsert: true, new: true } // Perform upsert if the user doesn't exist
     );
     const userId = user._doc._id;
+    const userName = user._doc.name;
+    const token = generateToken({ ...user._doc });
 
     const rooms = await Room.find({
       roomType: "Group",
       participants: { $ne: userId }, // MongoDB operator to check "not equal" in array
     });
+
+    if (rooms.length === 0) {
+      return res.status(201).json({
+        success: true,
+        isNewlyJoined: false,
+        token,
+      });
+    }
+
     // Update each room to add the user to the participants array
     const updatePromises = rooms.map((room) =>
       Room.updateOne(
@@ -165,12 +177,15 @@ exports.createUser = async (req, res, next) => {
 
     // Execute all updates
     await Promise.all(updatePromises);
-    const token = generateToken({ ...user._doc });
 
     if (user) {
       res.status(201).json({
         success: true,
+        isNewlyJoined: true,
         token,
+        userName,
+        userId,
+        roomIds: rooms.map((room) => room._id),
       });
     }
   } catch (error) {
@@ -184,7 +199,7 @@ exports.createMessage = async (req, res, next) => {
   try {
     const { id: roomId } = req.params;
     let { _id: userId } = req.user;
-    const { message, id } = req.body;
+    const { message, id, messageType } = req.body;
 
     userId = id ?? userId;
 
@@ -207,9 +222,15 @@ exports.createMessage = async (req, res, next) => {
 
 exports.socketCreateMessage = async (socket, data) => {
   try {
-    const { message, userId, roomId } = data;
+    let { message, userId, roomId, messageType } = data;
+    messageType = messageType ?? "message";
 
-    const savedMessage = await new Message({ roomId, userId, message }).save();
+    const savedMessage = await new Message({
+      roomId,
+      userId,
+      message,
+      messageType,
+    }).save();
 
     const populatedMessage = await Message.findById(savedMessage._id)
       .select({
@@ -217,6 +238,7 @@ exports.socketCreateMessage = async (socket, data) => {
         createdAt: 1,
         message: 1,
         userId: 1,
+        messageType,
       })
       .populate("userId", { _id: 1, name: 1 });
     const response = {
@@ -226,9 +248,17 @@ exports.socketCreateMessage = async (socket, data) => {
     socket.to(roomId).emit("newMessageSuccess", response);
     socket.emit("newMessageSuccess", response); // Sends back to the sender
   } catch (error) {
+    console.log(error);
+
+    let { roomId } = data;
+
     socket.to(roomId).emit("newMessageError", {
       success: false,
       message: error.message,
     });
+    socket.emit("newMessageError", {
+      success: false,
+      message: error.message,
+    }); // Sends back to the sender
   }
 };

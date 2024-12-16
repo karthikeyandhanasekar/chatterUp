@@ -7,6 +7,13 @@ const messageSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    messageType: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "message",
+      enum: ["message", "banner"],
+    },
     roomId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Rooms",

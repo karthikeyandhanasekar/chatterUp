@@ -2,10 +2,12 @@
 
 const socketIO = require("socket.io");
 const { socketCreateMessage } = require("../controllers/userControllers");
-const { transports } = require("winston");
+
+let socketIo = null;
+
 const initSocketServer = (server) => {
   try {
-    const io = socketIO(server, {
+    socketIo = socketIO(server, {
       transports: "polling",
       cors: {
         origin: "http://localhost:3000", // Replace with your client's URL
@@ -13,8 +15,20 @@ const initSocketServer = (server) => {
       },
     });
 
-    io.on("connection", (socket) => {
+    socketIo.on("connection", (socket) => {
       console.log(`A user connected: ${socket.id}`);
+
+      // Join a room
+      socket.on("welcomeRoom", async (data) => {
+        console.log({data});
+        
+        data.roomIds.forEach(async (roomId) => {
+          const localData = { ...data };
+          localData.roomId = roomId;
+          localData.messageType = "banner";
+          await socketCreateMessage(socket, localData);
+        });
+      });
 
       // Join a room
       socket.on("joinRoom", ({ roomId, userId }) => {
@@ -43,10 +57,10 @@ const initSocketServer = (server) => {
     });
 
     console.log("Socket.IO server initialized...");
-    return io;
+    return socketIo;
   } catch (error) {
     console.error("Error initializing Socket.IO server:", error);
   }
 };
-
-module.exports = initSocketServer;
+const useSocket = () => socketIo;
+module.exports = { initSocketServer, useSocket };
