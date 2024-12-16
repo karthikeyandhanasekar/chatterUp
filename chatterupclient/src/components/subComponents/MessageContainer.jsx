@@ -89,7 +89,6 @@ const MessagesContainerComponent = ({ messages }) => {
   }, [messages]);
 
   const isSender = (userId) => userId === currentUserId;
-  debugger;
   return (
     messages.length !== 0 && (
       <MessagesContainer>

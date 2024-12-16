@@ -10,7 +10,7 @@ import {
   getRoomMessagesController,
 } from "../pages/controllers/chatPageController";
 import { useSocket } from "../apiServices/socket";
-import { decodeJWT } from "../generals/generals";
+import { decodeJWT, handleNotifications } from "../generals/generals";
 const ChatWindowContainer = styled.div`
   flex: 1;
   width: 100%;
@@ -54,7 +54,6 @@ const ChatWindow = ({ room, openMenuFunction }) => {
     socket.on("roomJoined", (message) => {
       // alert(message);
     });
-    debugger;
   }, []);
 
   // Scroll to the latest message
@@ -71,10 +70,13 @@ const ChatWindow = ({ room, openMenuFunction }) => {
   };
 
   useEffect(() => {
-    const handleMessage = (message1) => {
-      console.log(message1);
-
-      setMessages((prev) => [...prev, message1.message]);
+    const handleMessage = (newMessage) => {
+      const { message } = newMessage;
+      // handleNotifications({
+      //   title: message.userId.name,
+      //   body: message.message,
+      // });
+      setMessages((prev) => [...prev, message]);
     };
     socket.on("newMessageSuccess", handleMessage);
 

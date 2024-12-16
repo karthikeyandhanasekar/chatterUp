@@ -108,7 +108,6 @@ function Sidebar({ onContactSelect, isOpen }) {
     if (!query) {
       setRoomList(fullMenu.current);
     } else {
-      debugger;
       setRoomList(searchRoomByParticipantName(fullMenu.current, query));
     }
   };

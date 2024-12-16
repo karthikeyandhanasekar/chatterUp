@@ -99,6 +99,13 @@ const MessageInput = ({ onSend }) => {
     }, 1000);
   };
 
+  const onInputKeyUp = (e) => {
+    e.preventDefault();
+    if (e.keyCode === 13) {
+      handleSend();
+    }
+  };
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -115,6 +122,7 @@ const MessageInput = ({ onSend }) => {
           value={message}
           onChange={handleTyping}
           placeholder="Type a message..."
+          onKeyUp={onInputKeyUp}
         />
         <SendButton onClick={handleSend}>Send</SendButton>
       </InputContainer>

@@ -1,7 +1,8 @@
 export const handleNotifications = ({
   title = "Notification",
   body,
-  icon = null,
+  icon = "%PUBLIC_URL%/logo192.png", // Default icon path
+  appName = "ChatApp", // Custom application name
   onPermissionDenied,
   onPermissionGranted,
 }) => {
@@ -13,7 +14,11 @@ export const handleNotifications = ({
 
   // Function to trigger the notification
   const showNotification = () => {
-    new Notification(title, { body, icon, requireInteraction: false });
+    new Notification(`${appName} - ${title}`, {
+      body,
+      icon,
+      requireInteraction: false,
+    });
   };
 
   // Check the current permission status
