@@ -96,10 +96,11 @@ function Sidebar({ onContactSelect, isOpen }) {
 
   // Function to search rooms by participant name
   const searchRoomByParticipantName = (rooms, participantName) => {
-    return rooms.filter((room) =>
-      room.participants.some((participant) =>
-        participant.name.toLowerCase().includes(participantName.toLowerCase())
-      )
+    return rooms.filter(
+      (room) => room.room.toLowerCase().includes(participantName.toLowerCase())
+      // room.participants.some((participant) =>
+      //   participant.name.toLowerCase().includes(participantName.toLowerCase())
+      // )
     );
   };
 

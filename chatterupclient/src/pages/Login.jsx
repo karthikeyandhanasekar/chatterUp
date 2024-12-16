@@ -34,7 +34,7 @@ const LoginPage = () => {
           debugger;
           const data = {
             roomIds: response.roomIds,
-            message: `User ${response.userName} joins this chat `,
+            message: `${response.userName} joins this chat `,
             userId: response.userId,
           };
           socket.emit("welcomeRoom", data);
