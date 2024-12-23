@@ -19,6 +19,13 @@ const roomSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+roomSchema.virtual("participantCount").get(function () {
+  return this.participants.length;
+});
+
+roomSchema.set("toObject", { virtuals: true });
+roomSchema.set("toJSON", { virtuals: true });
+
 const Room = mongoose.model("Rooms", roomSchema);
 
 module.exports = Room;
