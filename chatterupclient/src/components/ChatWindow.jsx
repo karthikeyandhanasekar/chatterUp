@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { ThreeDotIcon, MenuIcon } from "../Icons/Icons";
+import { ThreeDotIcon, MenuIcon, GroupLeaveIcon } from "../Icons/Icons";
 import UserDisplay from "./subComponents/UserDisplay";
 import MessageInput from "./MessageInput";
 import MessagesContainerComponent from "./subComponents/MessageContainer";
@@ -99,14 +99,35 @@ const ChatWindow = ({ room, openMenuFunction }) => {
     getRoomMessages();
   }, [room.id]);
 
+  const onhandleLeaveGroup = () => {
+    socket.emit("leaveRoom", {
+      roomId: room.id,
+      message: `${decodeJWT(token).name} left the chat`,
+      userId: currentUserId,
+    });
+  };
+
   return (
     <ChatWindowContainer>
       {/* Header */}
       <Header>
         <div>
-          <UserDisplay name={room.name} message="" />
+          <UserDisplay
+            name={room.name}
+            message={room.participantCount + " participant"}
+          />
         </div>
         <div>
+          <button
+            className="btn btn-dark dropdown-toggle"
+            type="button"
+            id="dropdownMenuButton"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            onClick={onhandleLeaveGroup}
+          >
+            <GroupLeaveIcon />
+          </button>
           {/* <button
             className="btn btn-dark dropdown-toggle"
             type="button"

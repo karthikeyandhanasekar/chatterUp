@@ -135,6 +135,22 @@ exports.getRoomMessages = async (req, res, next) => {
   }
 };
 
+exports.leaveRoom = async (req, res, next) => {
+  try {
+    let { id: roomId } = req.params;
+
+    let messages = await Room.updateOne(
+      { _id: roomId },
+      { $pull: { participants: { $in: req.user._id } } } // Remove multiple participants
+    );
+    return res.status(201).json({
+      success: true,
+      messages,
+    });
+  } catch (error) {
+    next(new CustomErrorHandler(500, error.message));
+  }
+};
 exports.createUser = async (req, res, next) => {
   try {
     const { name } = req.body;

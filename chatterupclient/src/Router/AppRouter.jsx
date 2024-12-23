@@ -35,7 +35,7 @@ const AppRouter = () => {
         <Route path="/login" exact element={<LoginPage />} />
 
         <Route path="/" exact element={<ChatPage />} />
-        <Route path="/:id/:name" element={<ChatPage />} />
+        <Route path="/:id/:name/:participantCount" element={<ChatPage />} />
       </Routes>
     </Suspense>
   );

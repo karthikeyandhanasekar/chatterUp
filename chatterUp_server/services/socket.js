@@ -20,8 +20,8 @@ const initSocketServer = (server) => {
 
       // Join a room
       socket.on("welcomeRoom", async (data) => {
-        console.log({data});
-        
+        console.log({ data });
+
         data.roomIds.forEach(async (roomId) => {
           const localData = { ...data };
           localData.roomId = roomId;
@@ -46,9 +46,12 @@ const initSocketServer = (server) => {
         await socketCreateMessage(socket, data);
       });
 
-      socket.on("leaveRoom", ({ roomId }) => {
-        socket.leave(roomId);
-        console.log(`Socket ${socket.id} left room ${roomId}`);
+      socket.on("leaveRoom", async (data) => {
+        console.log(data);
+        const localData = { ...data };
+        localData.messageType = "banner";
+        await socketCreateMessage(socket, localData);
+        console.log(`Socket ${socket.id} left room ${data.roomId}`);
       });
 
       socket.on("disconnect", () => {

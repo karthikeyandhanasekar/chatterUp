@@ -28,4 +28,8 @@ router
   .route("/createMessage/:id")
   .post(authorizationMiddleware, UserController.createMessage);
 
+router
+  .route("/createMessage/:id")
+  .put(authorizationMiddleware, UserController.leaveRoom);
+
 module.exports = router;

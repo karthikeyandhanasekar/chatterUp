@@ -39,7 +39,7 @@ const ToggleSidebarButton = styled.button`
 function ChatPage() {
   const [contacts] = useState([{ name: "Alice" }, { name: "Bob" }]);
   const navigate = useNavigate();
-  const { id, name } = useParams();
+  const { id, name, participantCount } = useParams();
   const isMobile = useResponsive();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -50,7 +50,9 @@ function ChatPage() {
       toggleSidebar();
     }
 
-    navigate(`/${value._id}/${getContactName(value)}`);
+    navigate(
+      `/${value._id}/${getContactName(value)}/${value.participantCount}`
+    );
   };
 
   return (
@@ -65,7 +67,7 @@ function ChatPage() {
         <>
           <ChatWindow
             isSidebarOpen={isSidebarOpen}
-            room={{ id, name }}
+            room={{ id, name, participantCount }}
             openMenuFunction={toggleSidebar}
           />
         </>
