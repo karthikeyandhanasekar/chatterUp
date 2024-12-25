@@ -38,7 +38,6 @@ const LoginPage = () => {
             userId: response.userId,
           };
           socket.emit("welcomeRoom", data);
-          debugger;
         }
         sessionStorage.setItem("employeeToken", response.token);
         setTimeout(() => {

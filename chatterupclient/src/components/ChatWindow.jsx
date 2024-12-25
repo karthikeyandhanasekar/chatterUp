@@ -10,7 +10,12 @@ import {
   getRoomMessagesController,
 } from "../pages/controllers/chatPageController";
 import { useSocket } from "../apiServices/socket";
-import { decodeJWT, handleNotifications } from "../generals/generals";
+import {
+  decodeJWT,
+  getContactName,
+  handleNotifications,
+} from "../generals/generals";
+import { useNavigate } from "react-router-dom";
 const ChatWindowContainer = styled.div`
   flex: 1;
   width: 100%;
@@ -44,6 +49,8 @@ const ChatWindow = ({ room, openMenuFunction }) => {
   const socket = useSocket();
   const token = sessionStorage.getItem("employeeToken");
   const currentUserId = decodeJWT(token)?._id;
+  const navigate = useNavigate();
+  const isheParticipants = useRef(true);
   useEffect(() => {
     socket.emit("joinRoom", {
       roomId: room.id,
@@ -67,20 +74,35 @@ const ChatWindow = ({ room, openMenuFunction }) => {
     } catch (error) {}
   };
 
-  useEffect(() => {
-    const handleMessage = (newMessage) => {
-      const { message } = newMessage;
-      // handleNotifications({
-      //   title: message.userId.name,
-      //   body: message.message,
-      // });
-      setMessages((prev) => [...prev, message]);
-    };
-    socket.on("newMessageSuccess", handleMessage);
+  const handleUpdateRoomDetails = (value) => {
+    navigate(
+      `/${value._id}/${getContactName(value)}/${value.participantCount}`
+    );
+  };
+  const handleMessage = (newMessage) => {
+    const { message } = newMessage;
+    handleNotifications({
+      title: message.userId.name,
+      body: message.message,
+    });
+    setMessages((prev) => [...prev, message]);
+  };
 
+  useEffect(() => {
+    socket.on("newMessageSuccess", handleMessage);
+    socket.on("newRoomDetails", handleUpdateRoomDetails);
     socket.on("newMessageError", (error) => {
       alert(error.errorMessage);
     });
+
+    // Cleanup function to avoid duplicate listeners
+    return () => {
+      socket.off("newMessageSuccess", handleMessage);
+      socket.off("newRoomDetails", handleUpdateRoomDetails);
+      socket.off("newMessageError", (error) => {
+        alert(error.errorMessage);
+      });
+    };
   }, [socket]);
 
   const onSendMessage = async (message) => {

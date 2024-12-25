@@ -64,13 +64,11 @@ function ChatPage() {
         toggleSidebar={toggleSidebar}
       />
       {id && (
-        <>
-          <ChatWindow
-            isSidebarOpen={isSidebarOpen}
-            room={{ id, name, participantCount }}
-            openMenuFunction={toggleSidebar}
-          />
-        </>
+        <ChatWindow
+          isSidebarOpen={isSidebarOpen}
+          room={{ id, name, participantCount }}
+          openMenuFunction={toggleSidebar}
+        />
       )}
     </ChatPageContainer>
   );

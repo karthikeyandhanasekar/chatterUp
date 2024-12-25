@@ -1,7 +1,7 @@
 // socket.js
 
 const socketIO = require("socket.io");
-const { socketCreateMessage } = require("../controllers/userControllers");
+const { socketCreateMessage, socketLeaveRoom } = require("../controllers/userControllers");
 
 let socketIo = null;
 
@@ -50,7 +50,9 @@ const initSocketServer = (server) => {
         console.log(data);
         const localData = { ...data };
         localData.messageType = "banner";
+        await socketLeaveRoom(socket, localData);
         await socketCreateMessage(socket, localData);
+       
         console.log(`Socket ${socket.id} left room ${data.roomId}`);
       });
 

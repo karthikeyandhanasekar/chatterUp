@@ -278,3 +278,28 @@ exports.socketCreateMessage = async (socket, data) => {
     }); // Sends back to the sender
   }
 };
+
+exports.socketLeaveRoom = async (socket, data) => {
+  try {
+    let { roomId, userId } = data;
+
+    const room = await Room.findByIdAndUpdate(
+      roomId,
+      { $pull: { participants: userId } }, // Pull the participant ID from the array
+      { new: true } // Return the updated document
+    );
+    socket.to(roomId).emit("newRoomDetails", Room);
+    socket.emit("newRoomDetails", room); // Sends back to the sender
+  } catch (error) {
+    console.log(error);
+    let { roomId } = data;
+    socket.to(roomId).emit("newMessageError", {
+      success: false,
+      message: error.message,
+    });
+    socket.emit("newMessageError", {
+      success: false,
+      message: error.message,
+    }); // Sends back to the sender
+  }
+};
